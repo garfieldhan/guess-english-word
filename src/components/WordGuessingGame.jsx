@@ -13,45 +13,41 @@ const WordGuessingGame = () => {
   const [playerCount, setPlayerCount] = useState(null);
   const [form] = Form.useForm();
   const [checkedList, setCheckedList] = useState(defaultCheckedList);
-  const [gameData, setGameData] = useState([]); // Store the loaded JSON data
-  const [displayedWordData, setDisplayedWordData] = useState({ headWord: '', tranCn: '' }); // Store the current word to display
-  const [autoPlay, setAutoPlay] = useState(false); // Store the "auto play" state
-  const [isGameStarted, setIsGameStarted] = useState(false); // Track if the game has started
+  const [gameData, setGameData] = useState([]);
+  const [displayedWordData, setDisplayedWordData] = useState({ headWord: '', tranCn: '' });
+  const [autoPlay, setAutoPlay] = useState(false);
+  const [isGameStarted, setIsGameStarted] = useState(false);
 
   const indeterminate = checkedList.length > 0 && checkedList.length < plainOptions.length;
   const checkAll = plainOptions.length === checkedList.length;
 
-  // Start game function to load and combine JSON data
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
       const { playerCount } = values;
       setPlayerCount(playerCount);
 
-      // Load and combine JSON data from selected checkboxes
       const loadedData = [];
       for (const item of checkedList) {
         try {
-          const response = await fetch(`/${item}.json`); // Adjust path if necessary
+          const response = await fetch(`/${item}.json`);
           const data = await response.json();
-          loadedData.push(...data); // Combine all data into one array
+          loadedData.push(...data);
         } catch (error) {
           console.error('Error loading JSON file:', error);
         }
       }
       setGameData(loadedData);
-      setIsModalVisible(false); // Close the modal only after loading data
-      setIsGameStarted(true); // Set the game as started
+      setIsModalVisible(false);
+      setIsGameStarted(true);
       message.success(`Game started with ${playerCount} player(s)!`);
     } catch (error) {
       console.log('Validation Failed:', error);
     }
   };
 
-  // Disable the Start Game button if no checkbox is selected
   const isStartButtonDisabled = checkedList.length === 0;
 
-  // Handle checkbox changes
   const onChange = (list) => {
     setCheckedList(list);
   };
@@ -60,18 +56,59 @@ const WordGuessingGame = () => {
     setCheckedList(e.target.checked ? plainOptions : []);
   };
 
-  // Handle auto play checkbox change
   const onAutoPlayChange = (e) => {
     setAutoPlay(e.target.checked);
   };
 
+  // Render Player components based on playerCount
+  const renderPlayers = () => {
+    if (playerCount === 2) {
+      // Top center and bottom center for 2 players
+      const positions = [
+        { position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)' },
+        { position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)' },
+      ];
+      return positions.map((position, index) => (
+        <div key={index} style={{ ...position }}>
+          <Player
+            gameData={gameData}
+            setDisplayedWordData={setDisplayedWordData}
+            autoPlay={autoPlay}
+            isGameStarted={isGameStarted}
+            setIsGameStarted={setIsGameStarted}
+          />
+        </div>
+      ));
+    } else if (playerCount === 4) {
+      // Four corners for 4 players
+      const positions = [
+        { position: 'absolute', top: '10px', left: '10px' }, // Top left
+        { position: 'absolute', top: '10px', right: '10px' }, // Top right
+        { position: 'absolute', bottom: '10px', left: '10px' }, // Bottom left
+        { position: 'absolute', bottom: '10px', right: '10px' }, // Bottom right
+      ];
+      return positions.map((position, index) => (
+        <div key={index} style={{ ...position }}>
+          <Player
+            gameData={gameData}
+            setDisplayedWordData={setDisplayedWordData}
+            autoPlay={autoPlay}
+            isGameStarted={isGameStarted}
+            setIsGameStarted={setIsGameStarted}
+          />
+        </div>
+      ));
+    }
+    return null;
+  };
+
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ padding: '20px', position: 'relative', height: '100vh' }}>
       <Modal
         title="Select Number of Players"
         open={isModalVisible}
         onOk={handleOk}
-        closable={false} // Disable close button
+        closable={false}
         footer={[
           <Button key="ok" type="primary" onClick={handleOk} disabled={isStartButtonDisabled}>
             Start Game
@@ -114,13 +151,7 @@ const WordGuessingGame = () => {
       {playerCount && (
         <div>
           <CenterBox displayedWordData={displayedWordData} />
-          <Player
-            gameData={gameData}
-            setDisplayedWordData={setDisplayedWordData}
-            autoPlay={autoPlay}
-            isGameStarted={isGameStarted}
-            setIsGameStarted={setIsGameStarted}
-          />
+          {renderPlayers()}
         </div>
       )}
     </div>

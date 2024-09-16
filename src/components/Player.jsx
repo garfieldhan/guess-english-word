@@ -1,4 +1,3 @@
-// src/components/Player.jsx
 import React, { useState, useEffect } from 'react';
 import { Button } from 'antd';
 
@@ -7,6 +6,7 @@ const Player = ({ gameData, setDisplayedWordData, autoPlay, isGameStarted, setIs
   const [intervalId, setIntervalId] = useState(null);
   const [currentWordData, setCurrentWordData] = useState({ headWord: '', tranCn: '' });
   const [words, setWords] = useState([]); // Start with an empty list
+  const [score, setScore] = useState(0); // Initialize score
 
   useEffect(() => {
     setWords(gameData); // Update the word list when gameData changes
@@ -54,7 +54,7 @@ const Player = ({ gameData, setDisplayedWordData, autoPlay, isGameStarted, setIs
               tranCn: randomWord.content.word.content.trans[0].tranCn,
             });
           }
-        }, 5); // Adjust interval as needed (500ms in this case)
+        }, 500); // Adjust interval as needed (500ms in this case)
         setIntervalId(id);
         setIsRunning(true);
         setIsGameStarted(true); // Set the game as started
@@ -84,10 +84,18 @@ const Player = ({ gameData, setDisplayedWordData, autoPlay, isGameStarted, setIs
             tranCn: randomWord.content.word.content.trans[0].tranCn,
           });
         }
-      }, 5); // Adjust interval as needed (500ms in this case)
+      }, 500); // Adjust interval as needed (500ms in this case)
       setIntervalId(id);
       setIsRunning(true);
     }
+  };
+
+  const incrementScore = () => {
+    setScore(score + 1);
+  };
+
+  const decrementScore = () => {
+    setScore(score - 1);
   };
 
   useEffect(() => {
@@ -104,6 +112,11 @@ const Player = ({ gameData, setDisplayedWordData, autoPlay, isGameStarted, setIs
         <Button onClick={handleKill}>
           Kill
         </Button>
+      </div>
+      <div>Score: {score}</div> {/* Display the score */}
+      <div className="button-container">
+        <Button onClick={incrementScore}>+</Button>
+        <Button onClick={decrementScore}>-</Button>
       </div>
     </div>
   );

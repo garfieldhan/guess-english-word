@@ -21,25 +21,3 @@ html, body {
     margin: 0;
     padding: 0;
   }
-
-  /* src/components/Player.css */
-.player-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end; /* Align items at the bottom */
-    align-items: center; /* Center items horizontally */
-    height: 90vh; /* Full viewport height */
-    width: 90vw; /* Full viewport width */
-    padding: 0 10px; /* Optional padding to avoid touching edges */
-    box-sizing: border-box; /* Ensure padding is included in the width/height */
-  }
-  
-  .button-container {
-    display: flex;
-    justify-content: center; /* Center buttons horizontally */
-    gap: 10px; /* Space between buttons */
-    margin-bottom: 20px; /* Space from the bottom */
-    width: 100%; /* Full width of the container */
-  }
-  
-  
