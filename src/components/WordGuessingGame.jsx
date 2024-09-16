@@ -1,5 +1,5 @@
 // src/components/WordGuessingGame.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Form, Radio, Button, message, Checkbox, Divider } from 'antd';
 import CenterBox from './CenterBox';
 import Player from './Player';
@@ -16,6 +16,7 @@ const WordGuessingGame = () => {
   const [gameData, setGameData] = useState([]); // Store the loaded JSON data
   const [displayedWordData, setDisplayedWordData] = useState({ headWord: '', tranCn: '' }); // Store the current word to display
   const [autoPlay, setAutoPlay] = useState(false); // Store the "auto play" state
+  const [isGameStarted, setIsGameStarted] = useState(false); // Track if the game has started
 
   const indeterminate = checkedList.length > 0 && checkedList.length < plainOptions.length;
   const checkAll = plainOptions.length === checkedList.length;
@@ -40,6 +41,7 @@ const WordGuessingGame = () => {
       }
       setGameData(loadedData);
       setIsModalVisible(false); // Close the modal only after loading data
+      setIsGameStarted(true); // Set the game as started
       message.success(`Game started with ${playerCount} player(s)!`);
     } catch (error) {
       console.log('Validation Failed:', error);
@@ -112,7 +114,13 @@ const WordGuessingGame = () => {
       {playerCount && (
         <div>
           <CenterBox displayedWordData={displayedWordData} />
-          <Player gameData={gameData} setDisplayedWordData={setDisplayedWordData} autoPlay={autoPlay} />
+          <Player
+            gameData={gameData}
+            setDisplayedWordData={setDisplayedWordData}
+            autoPlay={autoPlay}
+            isGameStarted={isGameStarted}
+            setIsGameStarted={setIsGameStarted}
+          />
         </div>
       )}
     </div>
