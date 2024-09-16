@@ -1,6 +1,6 @@
 // src/components/WordGuessingGame.jsx
 import React, { useState } from 'react';
-import { Modal, Form, Radio, Button, message, Checkbox } from 'antd';
+import { Modal, Form, Radio, Button, message, Checkbox, Divider } from 'antd';
 import CenterBox from './CenterBox';
 import Player from './Player';
 
@@ -15,6 +15,7 @@ const WordGuessingGame = () => {
   const [checkedList, setCheckedList] = useState(defaultCheckedList);
   const [gameData, setGameData] = useState([]); // Store the loaded JSON data
   const [displayedWordData, setDisplayedWordData] = useState({ headWord: '', tranCn: '' }); // Store the current word to display
+  const [autoPlay, setAutoPlay] = useState(false); // Store the "auto play" state
 
   const indeterminate = checkedList.length > 0 && checkedList.length < plainOptions.length;
   const checkAll = plainOptions.length === checkedList.length;
@@ -57,6 +58,11 @@ const WordGuessingGame = () => {
     setCheckedList(e.target.checked ? plainOptions : []);
   };
 
+  // Handle auto play checkbox change
+  const onAutoPlayChange = (e) => {
+    setAutoPlay(e.target.checked);
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <Modal
@@ -89,16 +95,24 @@ const WordGuessingGame = () => {
           </Form.Item>
         </Form>
 
+        <Divider />
+
         <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
           Check all
         </Checkbox>
         <CheckboxGroup options={plainOptions} value={checkedList} onChange={onChange} />
+
+        <Divider />
+
+        <Checkbox onChange={onAutoPlayChange} checked={autoPlay}>
+          Auto Play
+        </Checkbox>
       </Modal>
 
       {playerCount && (
         <div>
           <CenterBox displayedWordData={displayedWordData} />
-          <Player gameData={gameData} setDisplayedWordData={setDisplayedWordData} />
+          <Player gameData={gameData} setDisplayedWordData={setDisplayedWordData} autoPlay={autoPlay} />
         </div>
       )}
     </div>
