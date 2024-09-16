@@ -62,11 +62,42 @@ const WordGuessingGame = () => {
 
   // Render Player components based on playerCount
   const renderPlayers = () => {
-    if (playerCount === 2) {
+    if (playerCount === 1) {
+      // Center bottom for 1 player
+      return (
+        <div style={{ position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)' }}>
+          <Player
+            gameData={gameData}
+            setDisplayedWordData={setDisplayedWordData}
+            autoPlay={autoPlay}
+            isGameStarted={isGameStarted}
+            setIsGameStarted={setIsGameStarted}
+          />
+        </div>
+      );
+    } else if (playerCount === 2) {
       // Top center and bottom center for 2 players
       const positions = [
         { position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)' },
         { position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)' },
+      ];
+      return positions.map((position, index) => (
+        <div key={index} style={{ ...position }}>
+          <Player
+            gameData={gameData}
+            setDisplayedWordData={setDisplayedWordData}
+            autoPlay={autoPlay}
+            isGameStarted={isGameStarted}
+            setIsGameStarted={setIsGameStarted}
+          />
+        </div>
+      ));
+    } else if (playerCount === 3) {
+      // Top center, bottom center, and middle left for 3 players
+      const positions = [
+        { position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)' },  // Top center
+        { position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)' }, // Bottom center
+        { position: 'absolute', top: '50%', left: '10px', transform: 'translateY(-50%)' }, // Middle left
       ];
       return positions.map((position, index) => (
         <div key={index} style={{ ...position }}>
@@ -103,7 +134,7 @@ const WordGuessingGame = () => {
   };
 
   return (
-    <div style={{ padding: '20px', position: 'relative', height: '100vh' }}>
+    <div style={{ padding: '20px', position: 'relative', height: '90vh' }}>
       <Modal
         title="Select Number of Players"
         open={isModalVisible}
