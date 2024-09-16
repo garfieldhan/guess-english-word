@@ -95,13 +95,15 @@ const Player = ({ gameData, setDisplayedWordData, autoPlay, isGameStarted, setIs
   }, [intervalId]);
 
   return (
-    <div>
-      <Button onClick={toggleStartPause}>
-        {isRunning ? 'Pause' : 'Start'}
-      </Button>
-      <Button onClick={handleKill} style={{ marginLeft: '10px' }}>
-        Kill
-      </Button>
+    <div className="player-container">
+      <div className="button-container">
+        <Button onClick={toggleStartPause}>
+          {isRunning ? 'Pause' : 'Start'}
+        </Button>
+        <Button onClick={handleKill}>
+          Kill
+        </Button>
+      </div>
     </div>
   );
 };
