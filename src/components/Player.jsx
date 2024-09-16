@@ -54,7 +54,7 @@ const Player = ({ gameData, setDisplayedWordData, autoPlay, isGameStarted, setIs
               tranCn: randomWord.content.word.content.trans[0].tranCn,
             });
           }
-        }, 500); // Adjust interval as needed (500ms in this case)
+        }, 5); // Adjust interval as needed (500ms in this case)
         setIntervalId(id);
         setIsRunning(true);
         setIsGameStarted(true); // Set the game as started
@@ -84,7 +84,7 @@ const Player = ({ gameData, setDisplayedWordData, autoPlay, isGameStarted, setIs
             tranCn: randomWord.content.word.content.trans[0].tranCn,
           });
         }
-      }, 500); // Adjust interval as needed (500ms in this case)
+      }, 5); // Adjust interval as needed (500ms in this case)
       setIntervalId(id);
       setIsRunning(true);
     }
@@ -96,6 +96,7 @@ const Player = ({ gameData, setDisplayedWordData, autoPlay, isGameStarted, setIs
 
   return (
     <div className="player-container">
+      <div>remain: {words.length}</div>
       <div className="button-container">
         <Button onClick={toggleStartPause}>
           {isRunning ? 'Pause' : 'Start'}
