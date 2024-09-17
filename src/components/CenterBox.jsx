@@ -1,11 +1,11 @@
 // src/components/CenterBox.jsx
 import React, { useState } from 'react';
-import { Typography } from 'antd';
+import { Typography, Image } from 'antd';
 import { SoundOutlined } from '@ant-design/icons';
 
 const { Paragraph } = Typography;
 
-const CenterBox = ({ displayedWordData }) => {
+const CenterBox = ({ displayedWordData, isRunning }) => {
   const [isChinese, setIsChinese] = useState(true);
 
   const handleTouchStart = () => {
@@ -30,11 +30,11 @@ const CenterBox = ({ displayedWordData }) => {
       onTouchEnd={handleTouchEnd}
       style={{ textAlign: 'center', cursor: 'pointer' }}
     >
-      {/* <Image
-        width={200}
-        src={generateImageUrl(displayedWordData.headWord)}
+      {!isRunning && displayedWordData.picture && <Image
+        width={100}
+        src={displayedWordData.picture}
         preview={false}
-      /> */}
+      />}
       <Paragraph id="item-text" style={{ fontSize: '54px'}} >
         {isChinese ? displayedWordData.tranCn : displayedWordData.headWord}
       </Paragraph>

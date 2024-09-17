@@ -4,7 +4,7 @@ import CenterBox from './CenterBox';
 import Player from './Player';
 
 const CheckboxGroup = Checkbox.Group;
-const plainOptions = ['PEPXiaoXue3_1', 'PEPXiaoXue3_2', 'PEPXiaoXue4_1', 'PEPXiaoXue4_2'];
+const plainOptions = ['PEPXiaoXue3_1', 'PEPXiaoXue3_2', 'PEPXiaoXue4_1', 'PEPXiaoXue4_2', 'PEPXiaoXue5_1', 'PEPXiaoXue5_2', 'PEPXiaoXue6_1', 'PEPXiaoXue6_2', 'CET4luan_1', 'GaoZhongluan_2'];
 const defaultCheckedList = ['PEPXiaoXue3_1'];
 
 const WordGuessingGame = () => {
@@ -102,6 +102,7 @@ const WordGuessingGame = () => {
           setDisplayedWordData({
             headWord: randomWord.headWord,
             tranCn: randomWord.content.word.content.trans[0].tranCn,
+            picture: randomWord?.content?.word?.content?.picture
           });
         }
       }, 10);
@@ -246,7 +247,7 @@ const WordGuessingGame = () => {
               status="active"
             />
           </div>
-          <div style={boxPosition} ><CenterBox displayedWordData={displayedWordData} /></div>
+          <div style={boxPosition} ><CenterBox displayedWordData={displayedWordData} isRunning={isRunning}/></div>
           {renderPlayers()}
         </div>
       )}
