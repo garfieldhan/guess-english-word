@@ -14,7 +14,22 @@
     font-size: 2em; /* 调整文字大小 */
 }
 
-/* Global styles, e.g., src/index.css or global.css */
+.player-container {
+    width: 30vw;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: unset;
+    justify-content: space-evenly;
+}
+
+.score-container {
+    margin: 10px;
+    display: flex;
+    justify-content: center;
+}
+
 html, body {
     height: 100%;
     width: 100%;

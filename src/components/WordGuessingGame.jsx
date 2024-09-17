@@ -1,6 +1,6 @@
 // src/components/WordGuessingGame.jsx
-import React, { useState, useEffect, useRef } from 'react';
-import { Modal, Form, Radio, Button, message, Checkbox, Divider } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Modal, Form, Radio, Button, message, Checkbox, Divider, Progress } from 'antd';
 import CenterBox from './CenterBox';
 import Player from './Player';
 
@@ -58,6 +58,16 @@ const WordGuessingGame = () => {
 
   const isStartButtonDisabled = checkedList.length === 0;
 
+    // 添加 CSS 样式
+  const progressStyle = {
+    position: 'relative',
+    top: '30vw',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: '50%',
+    marginBottom: '10px'
+  };
+
   const onChange = (list) => {
     setCheckedList(list);
   };
@@ -105,12 +115,12 @@ const WordGuessingGame = () => {
   const playAudio = (word) => {
     const audioUrl = `https://dict.youdao.com/dictvoice?audio=${word}&type=1`;
     const audio = new Audio(audioUrl);
-    audio.play();
+    setTimeout(() => audio.play(), 500);
   };
 
   const playAudioTwice = (word) => {
     playAudio(word);
-    setTimeout(() => playAudio(word), 1000); // Play the audio again after 1 second
+    setTimeout(() => playAudio(word), 1000);
   };
 
   // Render Player components based on playerCount
@@ -120,19 +130,19 @@ const WordGuessingGame = () => {
       positions.push({ position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)' });
     } else if (playerCount === 2) {
       positions.push(
-        { position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)' },
+        { position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%) rotate(180deg)' },
         { position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)' }
       );
     } else if (playerCount === 3) {
       positions.push(
-        { position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)' },
+        { position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%) rotate(180deg)' },
         { position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)' },
-        { position: 'absolute', top: '50%', left: '10px', transform: 'translateY(-50%)' }
+        { position: 'absolute', top: '50%', left: '10px', transform: 'translateY(-50%) rotate(90deg)' }
       );
     } else if (playerCount === 4) {
       positions.push(
-        { position: 'absolute', top: '10px', left: '10px' },
-        { position: 'absolute', top: '10px', right: '10px' },
+        { position: 'absolute', top: '10px', left: '10px', transform: 'rotate(180deg)' },
+        { position: 'absolute', top: '10px', right: '10px', transform: 'rotate(180deg)' },
         { position: 'absolute', bottom: '10px', left: '10px' },
         { position: 'absolute', bottom: '10px', right: '10px' }
       );
@@ -147,6 +157,7 @@ const WordGuessingGame = () => {
           startGame={startGame}
           pauseGame={pauseGame}
           killWord={killWord}
+          currentPlayer={index}
         />
       </div>
     ));
@@ -179,23 +190,30 @@ const WordGuessingGame = () => {
             </Radio.Group>
           </Form.Item>
         </Form>
-
+  
         <Divider />
-
+  
         <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
           Check all
         </Checkbox>
         <CheckboxGroup options={plainOptions} value={checkedList} onChange={onChange} />
-        
+  
         <Divider />
-
+  
         <Checkbox onChange={onAutoPlayChange} checked={autoPlay}>
           Auto Play
         </Checkbox>
       </Modal>
-
+  
       {playerCount && (
         <div>
+          <div style={progressStyle}>
+            <Progress
+              percent={(words.length / gameData.length) * 100}
+              format={(percent) => `${words.length} words left`}
+              status="active"
+            />
+          </div>
           <CenterBox displayedWordData={displayedWordData} />
           {renderPlayers()}
         </div>
