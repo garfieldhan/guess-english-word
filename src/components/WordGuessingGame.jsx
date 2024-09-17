@@ -1,4 +1,3 @@
-// src/components/WordGuessingGame.jsx
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Radio, Button, message, Checkbox, Divider, Progress } from 'antd';
 import CenterBox from './CenterBox';
@@ -23,6 +22,15 @@ const WordGuessingGame = () => {
 
   const indeterminate = checkedList.length > 0 && checkedList.length < plainOptions.length;
   const checkAll = plainOptions.length === checkedList.length;
+
+  // 在其他状态变量下方添加
+  const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
+
+  const moveToNextPlayer = () => {
+    setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % playerCount);
+  };
+
+
 
   useEffect(() => {
     if (isGameStarted && words.length > 0) {
@@ -58,7 +66,7 @@ const WordGuessingGame = () => {
 
   const isStartButtonDisabled = checkedList.length === 0;
 
-    // 添加 CSS 样式
+  // 添加 CSS 样式
   const progressStyle = {
     position: 'relative',
     top: '30vw',
@@ -158,10 +166,13 @@ const WordGuessingGame = () => {
           pauseGame={pauseGame}
           killWord={killWord}
           currentPlayer={index}
+          isActive={index === currentPlayerIndex} // 传递是否是当前玩家
+          moveToNextPlayer={moveToNextPlayer} // 传递移动到下一个玩家的方法
         />
       </div>
     ));
   };
+
 
   return (
     <div style={{ padding: '20px', position: 'relative', height: '90vh' }}>
@@ -190,21 +201,21 @@ const WordGuessingGame = () => {
             </Radio.Group>
           </Form.Item>
         </Form>
-  
+
         <Divider />
-  
+
         <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
           Check all
         </Checkbox>
         <CheckboxGroup options={plainOptions} value={checkedList} onChange={onChange} />
-  
+
         <Divider />
-  
+
         <Checkbox onChange={onAutoPlayChange} checked={autoPlay}>
           Auto Play
         </Checkbox>
       </Modal>
-  
+
       {playerCount && (
         <div>
           <div style={progressStyle}>
