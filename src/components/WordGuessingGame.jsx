@@ -19,6 +19,7 @@ const WordGuessingGame = () => {
   const [words, setWords] = useState([]);
   const [autoPlay, setAutoPlay] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [boxPosition, setBoxPosition] = useState(null)
 
   const indeterminate = checkedList.length > 0 && checkedList.length < plainOptions.length;
   const checkAll = plainOptions.length === checkedList.length;
@@ -58,6 +59,11 @@ const WordGuessingGame = () => {
       setWords(loadedData); // Initialize the words list for global scrolling
       setIsModalVisible(false);
       setIsGameStarted(true);
+      if (playerCount === 1) {
+        setBoxPosition({ transform: 'rotate(0deg)', top: '50vw', position: 'relative'})
+      } else if (playerCount === 2 | playerCount === 3 | playerCount === 4) {
+        setBoxPosition({ transform: 'rotate(180deg)', top: '50vw', position: 'relative'})
+      }
       message.success(`Game started with ${playerCount} player(s)!`);
     } catch (error) {
       console.log('Validation Failed:', error);
@@ -98,7 +104,7 @@ const WordGuessingGame = () => {
             tranCn: randomWord.content.word.content.trans[0].tranCn,
           });
         }
-      }, 500);
+      }, 10);
       setIntervalId(id);
       setIsRunning(true);
     }
@@ -111,6 +117,21 @@ const WordGuessingGame = () => {
     }
     clearInterval(intervalId);
     setIsRunning(false);
+    if (playerCount === 2 && currentPlayerIndex === 0) {
+      setBoxPosition({ transform: 'rotate(0deg)', top: '50vw', position: 'relative'})
+    } else if (playerCount === 2 && currentPlayerIndex === 1) {
+      setBoxPosition({ transform: 'rotate(180deg)', top: '50vw', position: 'relative'})
+    } else if (playerCount === 3 && currentPlayerIndex === 0) {
+      setBoxPosition({ transform: 'rotate(0deg)', top: '50vw', position: 'relative'})
+    } else if (playerCount === 3 && currentPlayerIndex === 1) {
+      setBoxPosition({ transform: 'rotate(90deg)', top: '50vw', position: 'relative'})
+    } else if (playerCount === 3 && currentPlayerIndex === 2) {
+      setBoxPosition({ transform: 'rotate(180deg)', top: '50vw', position: 'relative'})
+    } else if (playerCount === 4 && (currentPlayerIndex === 0 || currentPlayerIndex === 3)) {
+      setBoxPosition({ transform: 'rotate(180deg)', top: '50vw', position: 'relative'})
+    } else if (playerCount === 4 && (currentPlayerIndex === 1 || currentPlayerIndex === 2)) {
+      setBoxPosition({ transform: 'rotate(0deg)', top: '50vw', position: 'relative'})
+    }
   };
 
   const killWord = () => {
@@ -225,7 +246,7 @@ const WordGuessingGame = () => {
               status="active"
             />
           </div>
-          <CenterBox displayedWordData={displayedWordData} />
+          <div style={boxPosition} ><CenterBox displayedWordData={displayedWordData} /></div>
           {renderPlayers()}
         </div>
       )}

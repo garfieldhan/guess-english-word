@@ -1,6 +1,7 @@
 {
   "name": "guess-english-word",
   "version": "0.1.0",
+  "homepage": "/game",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
