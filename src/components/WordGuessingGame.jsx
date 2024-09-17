@@ -1,5 +1,5 @@
 // src/components/WordGuessingGame.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Modal, Form, Radio, Button, message, Checkbox, Divider } from 'antd';
 import CenterBox from './CenterBox';
 import Player from './Player';
@@ -15,11 +15,20 @@ const WordGuessingGame = () => {
   const [checkedList, setCheckedList] = useState(defaultCheckedList);
   const [gameData, setGameData] = useState([]);
   const [displayedWordData, setDisplayedWordData] = useState({ headWord: '', tranCn: '' });
+  const [isRunning, setIsRunning] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
+  const [words, setWords] = useState([]);
   const [autoPlay, setAutoPlay] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
 
   const indeterminate = checkedList.length > 0 && checkedList.length < plainOptions.length;
   const checkAll = plainOptions.length === checkedList.length;
+
+  useEffect(() => {
+    if (isGameStarted && words.length > 0) {
+      startGame();
+    }
+  }, [isGameStarted, words]);
 
   const handleOk = async () => {
     try {
@@ -38,6 +47,7 @@ const WordGuessingGame = () => {
         }
       }
       setGameData(loadedData);
+      setWords(loadedData); // Initialize the words list for global scrolling
       setIsModalVisible(false);
       setIsGameStarted(true);
       message.success(`Game started with ${playerCount} player(s)!`);
@@ -60,77 +70,86 @@ const WordGuessingGame = () => {
     setAutoPlay(e.target.checked);
   };
 
+  const startGame = () => {
+    if (words.length > 0 && !isRunning) {
+      const id = setInterval(() => {
+        if (words.length > 0) {
+          const randomWord = words[Math.floor(Math.random() * words.length)];
+          setDisplayedWordData({
+            headWord: randomWord.headWord,
+            tranCn: randomWord.content.word.content.trans[0].tranCn,
+          });
+        }
+      }, 500);
+      setIntervalId(id);
+      setIsRunning(true);
+    }
+  };
+
+  const pauseGame = () => {
+    // Auto play sound when paused
+    if (autoPlay && displayedWordData.headWord) {
+      playAudioTwice(displayedWordData.headWord);
+    }
+    clearInterval(intervalId);
+    setIsRunning(false);
+  };
+
+  const killWord = () => {
+    if (displayedWordData.headWord) {
+      const updatedWords = words.filter(word => word.headWord !== displayedWordData.headWord);
+      setWords(updatedWords);
+    }
+  };
+
+  const playAudio = (word) => {
+    const audioUrl = `https://dict.youdao.com/dictvoice?audio=${word}&type=1`;
+    const audio = new Audio(audioUrl);
+    audio.play();
+  };
+
+  const playAudioTwice = (word) => {
+    playAudio(word);
+    setTimeout(() => playAudio(word), 1000); // Play the audio again after 1 second
+  };
+
   // Render Player components based on playerCount
   const renderPlayers = () => {
+    const positions = [];
     if (playerCount === 1) {
-      // Center bottom for 1 player
-      return (
-        <div style={{ position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)' }}>
-          <Player
-            gameData={gameData}
-            setDisplayedWordData={setDisplayedWordData}
-            autoPlay={autoPlay}
-            isGameStarted={isGameStarted}
-            setIsGameStarted={setIsGameStarted}
-          />
-        </div>
-      );
+      positions.push({ position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)' });
     } else if (playerCount === 2) {
-      // Top center and bottom center for 2 players
-      const positions = [
+      positions.push(
+        { position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)' },
+        { position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)' }
+      );
+    } else if (playerCount === 3) {
+      positions.push(
         { position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)' },
         { position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)' },
-      ];
-      return positions.map((position, index) => (
-        <div key={index} style={{ ...position }}>
-          <Player
-            gameData={gameData}
-            setDisplayedWordData={setDisplayedWordData}
-            autoPlay={autoPlay}
-            isGameStarted={isGameStarted}
-            setIsGameStarted={setIsGameStarted}
-          />
-        </div>
-      ));
-    } else if (playerCount === 3) {
-      // Top center, bottom center, and middle left for 3 players
-      const positions = [
-        { position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)' },  // Top center
-        { position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)' }, // Bottom center
-        { position: 'absolute', top: '50%', left: '10px', transform: 'translateY(-50%)' }, // Middle left
-      ];
-      return positions.map((position, index) => (
-        <div key={index} style={{ ...position }}>
-          <Player
-            gameData={gameData}
-            setDisplayedWordData={setDisplayedWordData}
-            autoPlay={autoPlay}
-            isGameStarted={isGameStarted}
-            setIsGameStarted={setIsGameStarted}
-          />
-        </div>
-      ));
+        { position: 'absolute', top: '50%', left: '10px', transform: 'translateY(-50%)' }
+      );
     } else if (playerCount === 4) {
-      // Four corners for 4 players
-      const positions = [
-        { position: 'absolute', top: '10px', left: '10px' }, // Top left
-        { position: 'absolute', top: '10px', right: '10px' }, // Top right
-        { position: 'absolute', bottom: '10px', left: '10px' }, // Bottom left
-        { position: 'absolute', bottom: '10px', right: '10px' }, // Bottom right
-      ];
-      return positions.map((position, index) => (
-        <div key={index} style={{ ...position }}>
-          <Player
-            gameData={gameData}
-            setDisplayedWordData={setDisplayedWordData}
-            autoPlay={autoPlay}
-            isGameStarted={isGameStarted}
-            setIsGameStarted={setIsGameStarted}
-          />
-        </div>
-      ));
+      positions.push(
+        { position: 'absolute', top: '10px', left: '10px' },
+        { position: 'absolute', top: '10px', right: '10px' },
+        { position: 'absolute', bottom: '10px', left: '10px' },
+        { position: 'absolute', bottom: '10px', right: '10px' }
+      );
     }
-    return null;
+
+    return positions.map((position, index) => (
+      <div key={index} style={{ ...position }}>
+        <Player
+          gameData={gameData}
+          setDisplayedWordData={setDisplayedWordData}
+          isRunning={isRunning}
+          startGame={startGame}
+          pauseGame={pauseGame}
+          killWord={killWord}
+        />
+      </div>
+    ));
   };
 
   return (
@@ -146,11 +165,7 @@ const WordGuessingGame = () => {
           </Button>,
         ]}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          initialValues={{ playerCount: 1 }}
-        >
+        <Form form={form} layout="vertical" initialValues={{ playerCount: 1 }}>
           <Form.Item
             name="playerCount"
             label="Number of Players"
@@ -171,7 +186,7 @@ const WordGuessingGame = () => {
           Check all
         </Checkbox>
         <CheckboxGroup options={plainOptions} value={checkedList} onChange={onChange} />
-
+        
         <Divider />
 
         <Checkbox onChange={onAutoPlayChange} checked={autoPlay}>
