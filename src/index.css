@@ -12,6 +12,7 @@
     transition: transform 0.5s;
     cursor: pointer;
     font-size: 2em; /* 调整文字大小 */
+    user-select: none; /* 禁用文本选择 */
 }
 
 .player-container {
@@ -35,4 +36,5 @@ html, body {
     width: 100%;
     margin: 0;
     padding: 0;
+    user-select: none; /* 禁用文本选择 */
   }

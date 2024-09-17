@@ -1,6 +1,6 @@
 // src/components/CenterBox.jsx
 import React, { useState } from 'react';
-import { Image, Typography } from 'antd';
+import { Typography } from 'antd';
 import { SoundOutlined } from '@ant-design/icons';
 
 const { Paragraph } = Typography;
@@ -8,16 +8,13 @@ const { Paragraph } = Typography;
 const CenterBox = ({ displayedWordData }) => {
   const [isChinese, setIsChinese] = useState(true);
 
-  // 根据 headWord 来生成图片的地址
-  const generateImageUrl = (word) => {
-    // return `https://quickchart.io/qr?text=${encodeURIComponent(word)}`;
-    return `https://picsum.photos/200`
+  const handleTouchStart = () => {
+    setIsChinese(false);
   };
 
-  // 切换中文和英文显示
-  const toggleWord = () => {
-    setIsChinese(!isChinese);
-  };
+  const handleTouchEnd = () => {
+    setIsChinese(true);
+  }
 
   // 播放发音
   const playAudio = () => {
@@ -27,7 +24,12 @@ const CenterBox = ({ displayedWordData }) => {
   };
 
   return (
-    <div id="center-box" onClick={toggleWord} style={{ textAlign: 'center', cursor: 'pointer' }}>
+    <div
+      id="center-box"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      style={{ textAlign: 'center', cursor: 'pointer' }}
+    >
       {/* <Image
         width={200}
         src={generateImageUrl(displayedWordData.headWord)}
